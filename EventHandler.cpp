@@ -55,19 +55,21 @@ DraggableWire* EventHandler::getDraggableWire(const osgUtil::LineSegmentIntersec
 template <typename T>
 void EventHandler::setColorFromMode(const T& selection)
 {
-    if (!selection.drawable.get() && m_selection.get()) {
-        /* when mouse is not hovering over anything
-         * set the color to defaults and de-select the geometries. */
-        std::cout << "Deselect the geometry" << std::endl;
-        m_selection->setColorDefaults();
-        m_selection = 0;
+    if (!selection.drawable.get()) {
+        if (m_selection.get()){
+            std::cout << "Deselect the geometry" << std::endl;
+            m_selection->setColorDefaults();
+            m_selection = 0;
+        }
     }
     else{
-        DraggableWire* wire = this->getDraggableWire(selection);
-        if (!wire) return;
-        std::cout << "Setting select colors for geometry" << std::endl;
-        wire->setColorWireSelected();
-        m_selection = wire;
+        if (!m_selection.get()){
+            DraggableWire* wire = this->getDraggableWire(selection);
+            if (!wire) return;
+            std::cout << "Setting select colors for geometry" << std::endl;
+            wire->setColorWireSelected();
+            m_selection = wire;
+        }
     }
 }
 
