@@ -18,6 +18,8 @@ set(SOURCES
     EventHandler.cpp
     LineIntersector.h
     LineIntersector.cpp
+    PointIntersector.h
+    PointIntersector.cpp
     )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

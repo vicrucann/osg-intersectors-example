@@ -20,7 +20,7 @@ public:
     virtual Intersector* clone( osgUtil::IntersectionVisitor& iv );
     virtual void intersect( osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable );
 
-private:
+protected:
     double getSkewLinesDistance(const osg::Vec3d &r1, const osg::Vec3d &r2, const osg::Vec3d &v1, const osg::Vec3d &v2);
 
 
