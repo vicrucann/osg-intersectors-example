@@ -10,6 +10,7 @@
 
 #include "DraggableWire.h"
 #include "LineIntersector.h"
+#include "PointIntersector.h"
 
 enum EDIT_MODE
 {
@@ -30,6 +31,8 @@ public:
     void doIdleMouse(const osgGA::GUIEventAdapter & ea, osgGA::GUIActionAdapter & aa);
 
     void doHoverWire(const osgGA::GUIEventAdapter & ea, osgGA::GUIActionAdapter & aa);
+
+    void doHoverPoint(const osgGA::GUIEventAdapter & ea, osgGA::GUIActionAdapter & aa);
 
 private:
     template <typename TypeIntersection, typename TypeIntersector>

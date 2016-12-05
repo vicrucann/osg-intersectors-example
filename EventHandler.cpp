@@ -23,6 +23,8 @@ bool EventHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdap
         this->doHoverWire(ea, aa);
         break;
     case MOUSE_HOVER_POINT:
+        this->doHoverPoint(ea, aa);
+        break;
     case MOUSE_DRAG_POINT:
         break;
     case MOUSE_DRAG_WIRE:
@@ -36,13 +38,20 @@ bool EventHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdap
 
 void EventHandler::doIdleMouse(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
-    // check if mouse is hovering  over the wires on scene
     this->setEditMode<LineIntersector::Intersection, LineIntersector>(ea, aa, MOUSE_IDLE);
 }
 
 void EventHandler::doHoverWire(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
 {
-    this->setEditMode<LineIntersector::Intersection, LineIntersector>(ea, aa, MOUSE_IDLE);
+    if (!this->setEditMode<LineIntersector::Intersection, LineIntersector>(ea, aa, MOUSE_IDLE))
+        return;
+
+    this->setEditMode<PointIntersector::Intersection, PointIntersector>(ea, aa, MOUSE_HOVER_WIRE);
+}
+
+void EventHandler::doHoverPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
+{
+
 }
 
 DraggableWire* EventHandler::getDraggableWire(const osgUtil::LineSegmentIntersector::Intersection& result)
@@ -58,7 +67,7 @@ void EventHandler::setColorFromMode(const T& selection)
     if (!selection.drawable.get()) {
         if (m_selection.get()){
             std::cout << "Deselect the geometry" << std::endl;
-            m_selection->setColorDefaults();
+            m_selection->unselect();
             m_selection = 0;
         }
     }
@@ -67,9 +76,11 @@ void EventHandler::setColorFromMode(const T& selection)
             DraggableWire* wire = this->getDraggableWire(selection);
             if (!wire) return;
             std::cout << "Setting select colors for geometry" << std::endl;
-            wire->setColorWireSelected();
+            wire->select();
             m_selection = wire;
         }
+        // if we deal with a point
+
     }
 }
 

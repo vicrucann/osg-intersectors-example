@@ -17,9 +17,6 @@ SVMData::SVMData()
 
     m_T1->addChild(m_wire1);
     m_T2->addChild(m_wire2);
-
-    m_wire1->setColorDefaults();
-    m_wire2->setColorDefaults();
 }
 
 void SVMData::setTransformPhoto(osg::Matrix m)
