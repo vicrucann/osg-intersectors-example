@@ -16,6 +16,7 @@ public:
 
     virtual Intersector* clone(osgUtil::IntersectionVisitor &iv);
     virtual void intersect(osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable);
+
 };
 
 #endif // POINTINTERSECTOR_H

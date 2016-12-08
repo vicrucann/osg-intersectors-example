@@ -4,15 +4,17 @@
 #include <iostream>
 
 DraggableWire::DraggableWire()
-    : osg::Geode()
+    : osg::MatrixTransform()
+    , m_geode(new osg::Geode)
     , m_wire(new osg::Geometry)
     , m_points(new osg::Geometry)
     , m_selectedPoint(-1)
     , m_selected(false)
     , m_dragged(false)
 {
-    this->addDrawable(m_wire);
-    this->addDrawable(m_points);
+    this->addChild(m_geode);
+    m_geode->addDrawable(m_wire);
+    m_geode->addDrawable(m_points);
 
     m_wire->setName("Wire");
     m_points->setName("Point");
@@ -39,6 +41,16 @@ DraggableWire::DraggableWire()
     m_wire->getOrCreateStateSet()->setAttribute(new osg::LineWidth(3.5f), osg::StateAttribute::ON);
 }
 
+osg::Vec3f DraggableWire::getCenter3D() const
+{
+    return osg::Vec3f(0,0,0);
+}
+
+const osg::Geode *DraggableWire::getGeode() const
+{
+    return m_geode;
+}
+
 void DraggableWire::unselect()
 {
     if (!m_selected) return;
@@ -55,7 +67,7 @@ void DraggableWire::select()
 {
     if (m_selected) return;
     std::cout << "select frame" << std::endl;
-    this->setColorWire(CLR_RED);
+    this->setColorWire(CLR_WIRE_HOVER);
     this->setColorPointsDefaults();
 
     m_selected = true;
@@ -75,7 +87,7 @@ void DraggableWire::pick(int index)
     std::cout << "pick point" << std::endl;
     this->select();
     for (int i=0; i<4; ++i){
-        osg::Vec4f clr = i==index? CLR_CYAN : CLR_POINTS;
+        osg::Vec4f clr = i==index? CLR_POINTS_HOVER : CLR_POINTS;
         this->setColorPoint(i, clr);
     }
 
@@ -97,7 +109,7 @@ void DraggableWire::drag()
     std::cout << "drag point" << std::endl;
 
     this->select();
-    this->setColorPointWire(m_selectedPoint, CLR_YELLOW);
+    this->setColorPointWire(m_selectedPoint, CLR_DRAG);
 
     m_selected = true;
     m_dragged = true;

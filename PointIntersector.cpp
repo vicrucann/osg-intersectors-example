@@ -66,6 +66,7 @@ osgUtil::Intersector *PointIntersector::clone(osgUtil::IntersectionVisitor &iv)
 void PointIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable *drawable)
 {
     osg::BoundingBox bb = drawable->getBoundingBox();
+
     bb.xMin() -= m_offset; bb.xMax() += m_offset;
     bb.yMin() -= m_offset; bb.yMax() += m_offset;
     bb.zMin() -= m_offset; bb.zMax() += m_offset;
@@ -75,7 +76,10 @@ void PointIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable
     if (iv.getDoDummyTraversal()) return;
 
     osg::Geometry* geometry = drawable->asGeometry();
-    if (geometry)
+    // TODO: make wire and point geometries to inherit from protected geometries
+    // the protected geometries should have getMode() method to get the type of geometry
+    // i.e. lines vs points
+    if (geometry && geometry->getName() == "Point")
     {
         osg::Vec3Array* vertices = dynamic_cast<osg::Vec3Array*>(geometry->getVertexArray());
         if (!vertices) return;

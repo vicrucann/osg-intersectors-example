@@ -7,11 +7,17 @@
 #include <osg/StateSet>
 #include <osg/Point>
 #include <osg/LineWidth>
+#include <osg/MatrixTransform>
 
-class DraggableWire : public osg::Geode
+class DraggableWire : public osg::MatrixTransform
 {
 public:
     DraggableWire();
+
+    /*! \return global center of the wire plane */
+    osg::Vec3f getCenter3D() const;
+
+    const osg::Geode* getGeode() const;
 
     /*! A method to set up defult colors for wire and point geometries. */
     void unselect();
@@ -48,18 +54,18 @@ protected:
     void setColorPointWire(int index, osg::Vec4f color);
 
 private:
-    const osg::Vec4f CLR_POINTS = osg::Vec4f(0.4f,0.8f,0.2f,1.f);
+    const osg::Vec4f CLR_POINTS = osg::Vec4f(0.2f,0.4f,0.1f,1.f);
     const osg::Vec4f CLR_WIRE = osg::Vec4f(0.6f, 0.6f, 0.6f, 1.f);
-    const osg::Vec4f CLR_RED = osg::Vec4f(1,0,0,1);
-    const osg::Vec4f CLR_MAGENTA = osg::Vec4f(1,0,1,1);
-    const osg::Vec4f CLR_CYAN = osg::Vec4f(0,0.5,1,1);
-    const osg::Vec4f CLR_YELLOW = osg::Vec4f(1,1,0,1);
+    const osg::Vec4f CLR_WIRE_HOVER = osg::Vec4f(0.8f,0.4f,0.9f,1.f);
+    const osg::Vec4f CLR_POINTS_HOVER = osg::Vec4f(0.4f,0.8f,0.2f,1.f);
+    const osg::Vec4f CLR_DRAG = osg::Vec4f(1.f,0.8f,0.4f,1.f);
 
 protected:
     /*! A method to update geometries after new colors are assigned. */
     void updateGeometry(osg::Geometry* geom);
 
 private:
+    osg::Geode*         m_geode;
     osg::Geometry*      m_wire; /*!< pointer on a geometry for wireframe */
     osg::Geometry*      m_points; /*!< pointer on a geometry for points */
     int                 m_selectedPoint; /*!< index of a selected point, in a range [0,3]; if none, it is -1 */
