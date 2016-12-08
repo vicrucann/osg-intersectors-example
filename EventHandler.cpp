@@ -19,6 +19,7 @@ EventHandler::EventHandler()
 
 bool EventHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
 {
+    bool handled = true;
     switch(m_mode){
     case MOUSE_HOVER_WIRE:
     case MOUSE_DRAG_WIRE:
@@ -28,14 +29,17 @@ bool EventHandler::handle(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdap
         this->doHoverPoint(ea, aa);
         break;
     case MOUSE_DRAG_POINT:
+        if (ea.getEventType() == osgGA::GUIEventAdapter::PUSH || ea.getEventType() == osgGA::GUIEventAdapter::RELEASE )
+            std::cout << "mouse-drag,event=" << ea.getEventType() << std::endl;
         this->doDragPoint(ea, aa);
         break;
     case MOUSE_IDLE:
     default:
         this->doIdleMouse(ea, aa);
+        handled = false;
         break;
     }
-    return false;
+    return handled;
 }
 
 void EventHandler::doIdleMouse(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
@@ -85,6 +89,14 @@ void EventHandler::doHoverPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActi
 
 void EventHandler::doDragPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
 {
+    if (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE){
+        std::cout << "release detected" << std::endl;
+        std::cout << "event=" << ea.getEventType() << std::endl;
+        m_selection->dragStop();
+        m_mode = MOUSE_HOVER_POINT;
+        return;
+    }
+
     if ( !(ea.getEventType() == osgGA::GUIEventAdapter::MOVE
          || (ea.getEventType() == osgGA::GUIEventAdapter::DRAG && ea.getButtonMask() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON))
          || (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE && ea.getButtonMask() == osgGA::GUIEventAdapter::LEFT_MOUSE_BUTTON)
@@ -92,16 +104,16 @@ void EventHandler::doDragPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
         return;
 
     std::cout << "drag-point" << std::endl;
+    std::cout << "event=" << ea.getEventType() << std::endl;
 
     // obtain new location of the dragging point and edit the selection
     double u=0, v=0;
-
-
-    bool isModeSame = true;
-    PointIntersector::Intersection intersectionPoint;
-    std::tie(isModeSame, intersectionPoint) =
-            this->setMouseState<PointIntersector::Intersection, PointIntersector>(ea, aa, MOUSE_HOVER_WIRE);
-    this->setPointState(intersectionPoint);
+    if (!this->getRaytraceWireIntersection(ea, aa, u, v)){
+        m_selection->dragStop();
+        m_mode = MOUSE_HOVER_POINT;
+        return;
+    }
+    m_selection->editPick(u,v);
 }
 
 DraggableWire* EventHandler::getDraggableWire(const osgUtil::LineSegmentIntersector::Intersection& result)
@@ -156,13 +168,21 @@ bool EventHandler::getRaytraceWireIntersection(const osgGA::GUIEventAdapter &ea,
 
     /* get intersection point in global 3D coords */
     osg::Vec3f P;
-    osg::Plane plane;
-    osg::Vec3f center;
+    osg::Plane plane = m_selection->getPlane();
+    osg::Vec3f center = m_selection->getCenter3D();
     if (!this->getRayPlaneIntersection(plane,center, nearPoint, farPoint, P))
         return false;
 
     /* get model matrix and its inverse */
-    osg::Matrix M, invM;
+    osg::Matrix M = m_selection->getMatrix();
+    osg::Matrix invM;
+    if (!invM.invert(M)) return false;
+
+    /* obtain intersection in local 2D point */
+    osg::Vec3f p = P * invM;
+    assert(std::fabs( p.z()) < 0.000001 );
+    u=p.x();
+    v=p.y();
 
     return true;
 }

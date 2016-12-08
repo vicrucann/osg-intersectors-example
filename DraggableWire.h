@@ -17,7 +17,11 @@ public:
     /*! \return global center of the wire plane */
     osg::Vec3f getCenter3D() const;
 
+    osg::Plane getPlane() const;
+
     const osg::Geode* getGeode() const;
+
+    void editPick(double u, double v);
 
     /*! A method to set up defult colors for wire and point geometries. */
     void unselect();
@@ -39,6 +43,8 @@ public:
 
     /*! A method to set up gragged colors to a point and adjacent edges of the wire. */
     void drag();
+
+    void dragStop();
 
 protected:
     /*! A method to set up default colors to all the points. */

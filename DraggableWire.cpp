@@ -43,12 +43,32 @@ DraggableWire::DraggableWire()
 
 osg::Vec3f DraggableWire::getCenter3D() const
 {
-    return osg::Vec3f(0,0,0);
+    return osg::Vec3f(0,0,0) * this->getMatrix();
+}
+
+osg::Plane DraggableWire::getPlane() const
+{
+    osg::Vec3f P1 = osg::Vec3f(1,0,0) * this->getMatrix();
+    osg::Vec3f P2 = osg::Vec3f(1,1,0) * this->getMatrix();
+    osg::Vec3f P3 = osg::Vec3f(0,1,0) * this->getMatrix();
+    return osg::Plane(P1, P2, P3);
 }
 
 const osg::Geode *DraggableWire::getGeode() const
 {
     return m_geode;
+}
+
+void DraggableWire::editPick(double u, double v)
+{
+    if (m_selectedPoint < 0 || m_selectedPoint>3) return;
+    osg::Vec3Array* vertsWire = static_cast<osg::Vec3Array*> (m_wire->getVertexArray());
+    osg::Vec3Array* vertsPoints = static_cast<osg::Vec3Array*> (m_points->getVertexArray());
+    assert(vertsWire && vertsPoints);
+    (*vertsWire)[m_selectedPoint] = osg::Vec3f(u,v,0);
+    (*vertsPoints)[m_selectedPoint] = osg::Vec3f(u,v,0);
+    this->updateGeometry(m_wire);
+    this->updateGeometry(m_points);
 }
 
 void DraggableWire::unselect()
@@ -113,6 +133,19 @@ void DraggableWire::drag()
 
     m_selected = true;
     m_dragged = true;
+}
+
+void DraggableWire::dragStop()
+{
+    if (!m_dragged) return;
+    if (m_selectedPoint < 0 || m_selectedPoint>=4) return;
+    std::cout << "drag point stop" << std::endl;
+
+    m_selected = false;
+    this->pick(m_selectedPoint);
+
+    m_selected = true;
+    m_dragged = false;
 }
 
 void DraggableWire::setColorPointsDefaults()
