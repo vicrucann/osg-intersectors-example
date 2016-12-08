@@ -1,5 +1,4 @@
 #include "LineIntersector.h"
-
 #include <osg/Geometry>
 
 LineIntersector::LineIntersector()
@@ -27,7 +26,6 @@ LineIntersector::LineIntersector(osgUtil::Intersector::CoordinateFrame cf, const
     : osgUtil::LineSegmentIntersector(cf, start, end)
     , m_offset(0.05f)
 {
-
 }
 
 void LineIntersector::setOffset(float offset)

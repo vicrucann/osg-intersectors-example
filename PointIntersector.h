@@ -12,8 +12,10 @@ public:
     PointIntersector();
     PointIntersector(const osg::Vec3& start,  const osg::Vec3& end);
     PointIntersector(CoordinateFrame cf, double x, double y);
+    PointIntersector(CoordinateFrame cf, const osg::Vec3d& start, const osg::Vec3d& end);
 
-    virtual void intersect( osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable );
+    virtual Intersector* clone(osgUtil::IntersectionVisitor &iv);
+    virtual void intersect(osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable);
 };
 
 #endif // POINTINTERSECTOR_H

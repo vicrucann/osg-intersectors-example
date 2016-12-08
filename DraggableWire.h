@@ -28,6 +28,9 @@ public:
      * \param index is the point index at which the color will be assigned. */
     void pick(int index);
 
+    /*! A method to set up point selected color to defaults. */
+    void unpick();
+
     /*! A method to set up gragged colors to a point and adjacent edges of the wire. */
     void drag();
 
@@ -49,6 +52,7 @@ private:
     const osg::Vec4f CLR_WIRE = osg::Vec4f(0.6f, 0.6f, 0.6f, 1.f);
     const osg::Vec4f CLR_RED = osg::Vec4f(1,0,0,1);
     const osg::Vec4f CLR_MAGENTA = osg::Vec4f(1,0,1,1);
+    const osg::Vec4f CLR_CYAN = osg::Vec4f(0,0.5,1,1);
     const osg::Vec4f CLR_YELLOW = osg::Vec4f(1,1,0,1);
 
 protected:

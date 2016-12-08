@@ -1,6 +1,8 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
+#include <tuple>
+
 #include <osgGA/EventHandler>
 #include <osgGA/GUIActionAdapter>
 #include <osgGA/GUIEventHandler>
@@ -39,15 +41,18 @@ private:
     bool getIntersection(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, TypeIntersection &resultIntersection);
 
     template <typename TResult, typename TIntersector>
-    bool setEditMode(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, EDIT_MODE modeDefault);
+    std::tuple<bool, TResult> setMouseState(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa, EDIT_MODE modeDefault);
 
     template <typename T>
     EDIT_MODE getMouseMode(const T& result, EDIT_MODE mode_default) const;
 
     DraggableWire* getDraggableWire(const LineIntersector::Intersection& result);
 
-    template <typename T>
-    void setColorFromMode(const T& selection);
+    int getSelectedPoint(const PointIntersector::Intersection& result);
+
+    void setWireState(const LineIntersector::Intersection& intersection);
+
+    void setPointState(const PointIntersector::Intersection& intersection);
 
     osg::observer_ptr<DraggableWire>    m_selection;
     EDIT_MODE                           m_mode;

@@ -1,6 +1,7 @@
 #include "DraggableWire.h"
 
 #include "assert.h"
+#include <iostream>
 
 DraggableWire::DraggableWire()
     : osg::Geode()
@@ -34,8 +35,8 @@ DraggableWire::DraggableWire()
     m_points->setColorArray(clrPts, osg::Array::BIND_PER_VERTEX);
     this->setColorPointsDefaults();
 
-    m_points->getOrCreateStateSet()->setAttribute(new osg::Point(10.f), osg::StateAttribute::ON);
-    m_wire->getOrCreateStateSet()->setAttribute(new osg::LineWidth(5.f), osg::StateAttribute::ON);
+    m_points->getOrCreateStateSet()->setAttribute(new osg::Point(20.f), osg::StateAttribute::ON);
+    m_wire->getOrCreateStateSet()->setAttribute(new osg::LineWidth(3.5f), osg::StateAttribute::ON);
 }
 
 void DraggableWire::unselect()
@@ -74,13 +75,19 @@ void DraggableWire::pick(int index)
     std::cout << "pick point" << std::endl;
     this->select();
     for (int i=0; i<4; ++i){
-        osg::Vec4f clr = i==index? CLR_MAGENTA : CLR_POINTS;
+        osg::Vec4f clr = i==index? CLR_CYAN : CLR_POINTS;
         this->setColorPoint(i, clr);
     }
 
     m_selected = true;
     m_dragged = false;
     m_selectedPoint = index;
+}
+
+void DraggableWire::unpick()
+{
+    this->setColorPointsDefaults();
+    m_selectedPoint = -1;
 }
 
 void DraggableWire::drag()

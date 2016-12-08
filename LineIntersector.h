@@ -18,7 +18,7 @@ public:
     void getHitIndices(int& first, int& last) const;
 
     virtual Intersector* clone( osgUtil::IntersectionVisitor& iv );
-    virtual void intersect( osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable );
+    virtual void intersect(osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable);
 
 protected:
     double getSkewLinesDistance(const osg::Vec3d &r1, const osg::Vec3d &r2, const osg::Vec3d &v1, const osg::Vec3d &v2);
