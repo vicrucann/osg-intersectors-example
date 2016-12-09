@@ -76,11 +76,10 @@ void PointIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable
     if (iv.getDoDummyTraversal()) return;
 
     osg::Geometry* geometry = drawable->asGeometry();
-    // TODO: make wire and point geometries to inherit from protected geometries
-    // the protected geometries should have getMode() method to get the type of geometry
-    // i.e. lines vs points
-    if (geometry && geometry->getName() == "Point")
+    if (geometry)
     {
+        if (!this->isRightPrimitive(geometry)) return;
+
         osg::Vec3Array* vertices = dynamic_cast<osg::Vec3Array*>(geometry->getVertexArray());
         if (!vertices) return;
 
@@ -103,4 +102,14 @@ void PointIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable
             insertIntersection(hit);
         }
     }
+}
+
+bool PointIntersector::isRightPrimitive(const osg::Geometry *geometry)
+{
+    const osg::Geometry::PrimitiveSetList& primitives = geometry->getPrimitiveSetList();
+    for (const auto& p : primitives){
+        if (p->getMode() == GL_POINTS)
+            return true;
+    }
+    return false;
 }
