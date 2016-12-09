@@ -4,6 +4,13 @@
 #include <vector>
 #include <osgUtil/LineSegmentIntersector>
 
+/*! \class LineIntersector
+ * \brief A class that allows to catch intersections with line loops and lines OpenGL types.
+ * It uses shortest distance between the cast ray and the geometry line which is calculated
+ * as a distance between skew lines.
+ * In addition, it filters out the geometries whose primitive sets are different than line-types.
+*/
+
 class LineIntersector : public osgUtil::LineSegmentIntersector
 {
 public:

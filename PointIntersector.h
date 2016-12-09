@@ -23,7 +23,7 @@ public:
     virtual Intersector* clone(osgUtil::IntersectionVisitor &iv);
     virtual void intersect(osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable);
 
-private:
+protected:
     virtual bool isRightPrimitive(const osg::Geometry* geometry);
 };
 
