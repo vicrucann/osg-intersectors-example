@@ -12,38 +12,38 @@
 class DraggableWire : public osg::MatrixTransform
 {
 public:
+    /*! A constructor - initializes the scene graph and sets default wire colors */
     DraggableWire();
 
-    /*! \return global center of the wire plane */
+    /*! \return global center of the wire plane. In local coordinates, the center is always (0,0). */
     osg::Vec3f getCenter3D() const;
 
+    /*! \return a plane that describes the position of all the points of the wire. */
     osg::Plane getPlane() const;
 
+    /*! \return const pointer on geode node which contains all the drawables (wire and points). */
     const osg::Geode* getGeode() const;
 
+    /*! A method to edit a location of a selected point within the plane of the wire. \param u is the new local u coordinate, \param v is the new local v coordinate. */
     void editPick(double u, double v);
 
     /*! A method to set up defult colors for wire and point geometries. */
     void unselect();
 
-    /*! A method to set up selected color for all the wire geometry. */
+    /*! A method to set up selected color for the wire geometry. */
     void select();
 
-protected:
-    /*! A method to set up default colors for all the wire geometry. */
-    void setColorWireDefaults();
-
-public:
     /*! A method to set up selected color to a specified point.
      * \param index is the point index at which the color will be assigned. */
     void pick(int index);
 
-    /*! A method to set up point selected color to defaults. */
+    /*! A method to set up selected point color to defaults. */
     void unpick();
 
     /*! A method to set up gragged colors to a point and adjacent edges of the wire. */
     void drag();
 
+    /*! A method to indicate color changes from state drag to state hover over point. */
     void dragStop();
 
 protected:
@@ -75,8 +75,6 @@ private:
     osg::Geometry*      m_wire; /*!< pointer on a geometry for wireframe */
     osg::Geometry*      m_points; /*!< pointer on a geometry for points */
     int                 m_selectedPoint; /*!< index of a selected point, in a range [0,3]; if none, it is -1 */
-    bool                m_selected; /*!< flag to indicate whether the wire is currently selected or not. */
-    bool                m_dragged; /*!< flag to indicate whether the wire is currently being dragged or not. */
 };
 
 #endif // DRAGGABLEWIRE_H
