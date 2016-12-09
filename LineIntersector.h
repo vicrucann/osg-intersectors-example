@@ -22,7 +22,7 @@ public:
 
 protected:
     double getSkewLinesDistance(const osg::Vec3d &r1, const osg::Vec3d &r2, const osg::Vec3d &v1, const osg::Vec3d &v2);
-
+    virtual bool isRightPrimitive(const osg::Geometry* geometry);
 
     float m_offset;
     std::vector<unsigned int> m_hitIndices;

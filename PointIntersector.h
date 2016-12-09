@@ -24,7 +24,7 @@ public:
     virtual void intersect(osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable);
 
 private:
-    bool isRightPrimitive(const osg::Geometry* geometry);
+    virtual bool isRightPrimitive(const osg::Geometry* geometry);
 };
 
 #endif // POINTINTERSECTOR_H

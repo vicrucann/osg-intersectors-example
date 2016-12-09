@@ -104,6 +104,8 @@ void LineIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable 
     osg::Geometry* geometry = drawable->asGeometry();
     if (geometry)
     {
+        if (!this->isRightPrimitive(geometry)) return;
+
         osg::Vec3Array* vertices = dynamic_cast<osg::Vec3Array*>(geometry->getVertexArray());
         if (!vertices) return;
 
@@ -134,4 +136,15 @@ double LineIntersector::getSkewLinesDistance(const osg::Vec3d &r1, const osg::Ve
     if (u3.length() == 0)
         return 1;
     return std::fabs((dir*u3)/u3.length());
+}
+
+bool LineIntersector::isRightPrimitive(const osg::Geometry *geometry)
+{
+    const osg::Geometry::PrimitiveSetList& primitives = geometry->getPrimitiveSetList();
+    for (const auto& p : primitives){
+        if (p->getMode() == GL_LINE_LOOP || p->getMode() == GL_LINES ||
+                p->getMode() == GL_LINE_STRIP)
+            return true;
+    }
+    return false;
 }
