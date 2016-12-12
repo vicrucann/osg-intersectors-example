@@ -7,13 +7,8 @@
 #include <osg/Camera>
 
 VirtualPlaneIntersector::VirtualPlaneIntersector(DraggableWire *wire)
-    : m_wire(wire)
+    : m_planeGeometry(wire)
 {
-}
-
-bool VirtualPlaneIntersector::isVirtualIntersector() const
-{
-    return true;
 }
 
 bool VirtualPlaneIntersector::getIntersection(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, double &u, double &v)
@@ -28,13 +23,13 @@ bool VirtualPlaneIntersector::getIntersection(const osgGA::GUIEventAdapter &ea, 
 
     /* get intersection point in global 3D coords */
     osg::Vec3f P;
-    osg::Plane plane = m_wire->getPlane();
-    osg::Vec3f center = m_wire->getCenter3D();
+    osg::Plane plane = m_planeGeometry->getPlane();
+    osg::Vec3f center = m_planeGeometry->getCenter3D();
     if (!this->getRayPlaneIntersection(plane,center, nearPoint, farPoint, P))
         return false;
 
     /* get model matrix and its inverse */
-    osg::Matrix M = m_wire->getMatrix();
+    osg::Matrix M = m_planeGeometry->getMatrix();
     osg::Matrix invM;
     if (!invM.invert(M)) return false;
 
@@ -47,9 +42,16 @@ bool VirtualPlaneIntersector::getIntersection(const osgGA::GUIEventAdapter &ea, 
     return true;
 }
 
+VirtualPlaneIntersector::Intersection VirtualPlaneIntersector::getIntersection(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
+{
+    double u=0,v=0;
+    bool success = this->getIntersection(ea, aa, u, v);
+    return std::make_tuple(u,v,success);
+}
+
 bool VirtualPlaneIntersector::getViewProjectionWorld(osgGA::GUIActionAdapter &aa, osg::Matrix &VPW, osg::Matrix &invVPW)
 {
-    if (!m_wire.get()) return false;
+    if (!m_planeGeometry.get()) return false;
     osgViewer::View* viewer = dynamic_cast<osgViewer::View*>(&aa);
     if (!viewer) return false;
     osg::Camera* camera = viewer->getCamera();

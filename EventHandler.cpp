@@ -48,7 +48,7 @@ void EventHandler::doIdleMouse(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
     bool isModeSame = true;
     LineIntersector::Intersection intersection;
     std::tie(isModeSame, intersection) = this->setMouseState<LineIntersector::Intersection, LineIntersector>(ea, aa, MOUSE_IDLE);
-    this->setWireState(intersection);
+    this->updateWireGeometry(intersection);
 }
 
 void EventHandler::doHoverWire(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa)
@@ -59,13 +59,13 @@ void EventHandler::doHoverWire(const osgGA::GUIEventAdapter& ea, osgGA::GUIActio
     bool isModeSame = true;
     LineIntersector::Intersection intersectionLine;
     std::tie(isModeSame, intersectionLine) = this->setMouseState<LineIntersector::Intersection, LineIntersector>(ea, aa, MOUSE_IDLE);
-    this->setWireState(intersectionLine);
+    this->updateWireGeometry(intersectionLine);
     if (!isModeSame) return;
 
     PointIntersector::Intersection intersectionPoint;
     std::tie(isModeSame, intersectionPoint) =
             this->setMouseState<PointIntersector::Intersection, PointIntersector>(ea, aa, MOUSE_HOVER_WIRE);
-    this->setPointState(intersectionPoint);
+    this->updatePointGeometry(intersectionPoint);
 }
 
 void EventHandler::doHoverPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
@@ -78,7 +78,7 @@ void EventHandler::doHoverPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActi
     PointIntersector::Intersection intersectionPoint;
     std::tie(isModeSame, intersectionPoint) =
             this->setMouseState<PointIntersector::Intersection, PointIntersector>(ea, aa, MOUSE_HOVER_WIRE);
-    this->setPointState(intersectionPoint);
+    this->updatePointGeometry(intersectionPoint);
 }
 
 void EventHandler::doDragPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa)
@@ -90,24 +90,12 @@ void EventHandler::doDragPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
         return;
 
     /* obtain new location of the dragging point and edit the selection */
-    double u=0, v=0;
     VirtualPlaneIntersector* vpi = new VirtualPlaneIntersector(m_selection.get());
-    if (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE ||
-            ! vpi->getIntersection(ea, aa, u, v) ) {
-        m_selection->dragStop();
-        m_mode = MOUSE_HOVER_POINT;
-        return;
-    }
-    m_selection->editPick(u,v);
+    VirtualPlaneIntersector::Intersection intersection = vpi->getIntersection(ea, aa);
+    this->updateDragPointGeometry(intersection, ea);
 }
 
-EDIT_MODE EventHandler::getMouseSubMode(EDIT_MODE mode, const osgGA::GUIEventAdapter &ea)
-{
-    return static_cast<EDIT_MODE>((ea.getEventType() == osgGA::GUIEventAdapter::DRAG)?
-                (mode | EDIT_MODE::DRAG_MASK) : mode);
-}
-
-DraggableWire* EventHandler::getDraggableWire(const osgUtil::LineSegmentIntersector::Intersection& result)
+DraggableWire *EventHandler::getDraggableWire(const osgUtil::LineSegmentIntersector::Intersection &result)
 {
     if (!result.drawable.get()) return NULL;
     osg::Group* group = result.drawable->getParent(0);
@@ -123,7 +111,41 @@ int EventHandler::getSelectedPoint(const osgUtil::LineSegmentIntersector::Inters
     return result.primitiveIndex;
 }
 
-void EventHandler::setPointState(const PointIntersector::Intersection &intersection)
+EDIT_MODE EventHandler::getModeFromName(const osgUtil::LineSegmentIntersector::Intersection &result, EDIT_MODE mode_default) const
+{
+    std::string name = result.drawable->getName();
+    if (name == "Wire")
+        return MOUSE_HOVER_WIRE;
+    else if (name == "Point")
+        return MOUSE_HOVER_POINT;
+    return mode_default;
+}
+
+EDIT_MODE EventHandler::getModeFromEvent(EDIT_MODE mode, const osgGA::GUIEventAdapter &ea)
+{
+    return static_cast<EDIT_MODE>((ea.getEventType() == osgGA::GUIEventAdapter::DRAG)?
+                                      (mode | EDIT_MODE::DRAG_MASK) : mode);
+}
+
+void EventHandler::updateWireGeometry(const osgUtil::LineSegmentIntersector::Intersection &intersection)
+{
+    if (intersection.drawable.get()){
+        if (!m_selection.get()){
+            DraggableWire* wire = this->getDraggableWire(intersection);
+            if (!wire) return;
+            wire->select();
+            m_selection = wire;
+        }
+    }
+    else {
+        if (m_selection.get()){
+            m_selection->unselect();
+            m_selection = 0;
+        }
+    }
+}
+
+void EventHandler::updatePointGeometry(const osgUtil::LineSegmentIntersector::Intersection &intersection)
 {
     if (intersection.drawable.get()){
         // pick a point
@@ -147,21 +169,14 @@ void EventHandler::setPointState(const PointIntersector::Intersection &intersect
     }
 }
 
-void EventHandler::setWireState(const LineIntersector::Intersection &intersection)
+void EventHandler::updateDragPointGeometry(const std::tuple<double, double, bool> &intersection, const osgGA::GUIEventAdapter &ea)
 {
-    if (intersection.drawable.get()){
-        if (!m_selection.get()){
-            DraggableWire* wire = this->getDraggableWire(intersection);
-            if (!wire) return;
-            wire->select();
-            m_selection = wire;
-        }
+    if (ea.getEventType() == osgGA::GUIEventAdapter::RELEASE || !std::get<2>(intersection)){
+        m_selection->dragStop();
+        m_mode = MOUSE_HOVER_POINT;
     }
     else {
-        if (m_selection.get()){
-            m_selection->unselect();
-            m_selection = 0;
-        }
+        m_selection->editPick(std::get<0>(intersection), std::get<1>(intersection));
     }
 }
 
@@ -190,8 +205,8 @@ std::tuple<bool, TResult> EventHandler::setMouseState(const osgGA::GUIEventAdapt
 
     /* if mouse is hovering over certain drawable, set the corresponding mode */
     if (inter_occured){
-        EDIT_MODE mode = this->getMouseMode<TResult>(intersection, modeDefault);
-        mode = this->getMouseSubMode(mode, ea);
+        EDIT_MODE mode = this->getModeFromName(intersection, modeDefault);
+        mode = this->getModeFromEvent(mode, ea);
         isModeSame = (mode == m_mode);
         m_mode = mode;
     }
@@ -202,15 +217,4 @@ std::tuple<bool, TResult> EventHandler::setMouseState(const osgGA::GUIEventAdapt
     }
 
     return std::make_tuple(isModeSame, intersection);
-}
-
-template <typename T>
-EDIT_MODE EventHandler::getMouseMode(const T& result, EDIT_MODE mode_default) const
-{
-    std::string name = result.drawable->getName();
-    if (name == "Wire")
-        return MOUSE_HOVER_WIRE;
-    else if (name == "Point")
-        return MOUSE_HOVER_POINT;
-    return mode_default;
 }
