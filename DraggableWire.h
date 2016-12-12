@@ -1,3 +1,12 @@
+/*!
+ * \brief A polygon class whose corners are draggable by user.
+ * \details This file is a part of osgIntersectors example program. See more details:
+ * https://github.com/vicrucann/osg-intersectors-example
+ * \autor Victoria Rudakova
+ * \date 2016-2017
+ * \copyright MIT License
+*/
+
 #ifndef DRAGGABLEWIRE_H
 #define DRAGGABLEWIRE_H
 

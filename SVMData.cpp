@@ -11,7 +11,7 @@ SVMData::SVMData()
     m_switch->addChild(m_wire2);
 }
 
-void SVMData::setTransformPhoto(osg::Matrix m)
+void SVMData::setTransformWall(osg::Matrix m)
 {
     m_wire1->setMatrix(m);
 }

@@ -5,6 +5,13 @@
 #include <osg/ShapeDrawable>
 #include <osg/Camera>
 #include <osg/Material>
+/*!
+ * \brief Main file that adds tester and reference geometries to the scene graph.
+ * \author Victoria Rudakova
+ * \date 2016-2017
+ * \copyright MIT License
+*/
+
 #include <osg/Geode>
 #include <osg/Geometry>
 #include <osg/LineWidth>
@@ -31,17 +38,16 @@ osg::Node* createReferenceNode()
 int main(int, char**)
 {
     ::SetProcessDPIAware();
-    std::cout << "Line and point intersectors demo" << std::endl;
-
+    std::cout << "Line, point and virtual plane intersectors demo." << std::endl;
 
     osgViewer::Viewer viewer;
 
     osg::ref_ptr<osg::Group> root = new osg::Group();
 
-    // create some svm data
+    // create a tester node
     SVMData* svm = new SVMData();
     svm->setTransformFloor(osg::Matrix::identity() * osg::Matrix::translate(0,1.5,0));
-    svm->setTransformPhoto(osg::Matrix::rotate(3.14157*0.5, 1, 0, 0));
+    svm->setTransformWall(osg::Matrix::rotate(3.14157*0.5, 1, 0, 0));
 
     root->addChild(svm);
     osg::Node* node = createReferenceNode();

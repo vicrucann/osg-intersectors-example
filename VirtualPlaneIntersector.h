@@ -1,3 +1,12 @@
+/*!
+ * \brief Virtual plane intersection class.
+ * \details This file is a part of osgIntersectors example program. See more details:
+ * https://github.com/vicrucann/osg-intersectors-example
+ * \autor Victoria Rudakova
+ * \date 2016-2017
+ * \copyright MIT License
+*/
+
 #ifndef VIRTUALPLANEINTERSECTOR_H
 #define VIRTUALPLANEINTERSECTOR_H
 
