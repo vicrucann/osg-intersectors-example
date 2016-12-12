@@ -6,6 +6,10 @@
 
 #include "DraggableWire.h"
 
+/*! \class SVMData
+ * \brief A tester class that contains two DraggableWire geometries.
+*/
+
 class SVMData : public osg::Group
 {
 public:

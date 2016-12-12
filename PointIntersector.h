@@ -1,7 +1,6 @@
 #ifndef POINTINTERSECTOR_H
 #define POINTINTERSECTOR_H
 
-#include <vector>
 #include "LineIntersector.h"
 #include <osgUtil/LineSegmentIntersector>
 #include <osg/Drawable>

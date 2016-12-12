@@ -20,6 +20,8 @@ set(SOURCES
     LineIntersector.cpp
     PointIntersector.h
     PointIntersector.cpp
+    VirtualPlaneIntersector.h
+    VirtualPlaneIntersector.cpp
     )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

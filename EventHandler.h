@@ -13,6 +13,7 @@
 #include "DraggableWire.h"
 #include "LineIntersector.h"
 #include "PointIntersector.h"
+#include "VirtualPlaneIntersector.h"
 
 enum EDIT_MODE
 {
@@ -25,7 +26,9 @@ enum EDIT_MODE
     DRAG_MASK = 0x010
 };
 
-
+/*! \class EventHandler
+ * \brief Class that handles events for scene.
+*/
 class EventHandler : public osgGA::GUIEventHandler
 {
 public:
@@ -41,7 +44,7 @@ public:
 
     void doDragPoint(const osgGA::GUIEventAdapter & ea, osgGA::GUIActionAdapter & aa);
 
-private:
+protected:
     template <typename TypeIntersection, typename TypeIntersector>
     bool getIntersection(const osgGA::GUIEventAdapter &ea, osgGA::GUIActionAdapter &aa, TypeIntersection &resultIntersection);
 
@@ -51,6 +54,8 @@ private:
     template <typename T>
     EDIT_MODE getMouseMode(const T& result, EDIT_MODE mode_default) const;
 
+    EDIT_MODE getMouseSubMode(EDIT_MODE mode, const osgGA::GUIEventAdapter& ea);
+
     DraggableWire* getDraggableWire(const LineIntersector::Intersection& result);
 
     int getSelectedPoint(const PointIntersector::Intersection& result);
@@ -58,15 +63,6 @@ private:
     void setWireState(const LineIntersector::Intersection& intersection);
 
     void setPointState(const PointIntersector::Intersection& intersection);
-
-    bool getRaytraceWireIntersection(const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& aa,
-                                     double &u, double &v);
-
-    bool getViewProjectionWorld(osgGA::GUIActionAdapter &aa, osg::Matrix &VPW, osg::Matrix &invVPW);
-
-    void getFarNear(double x, double y, const osg::Matrix &invVPW, osg::Vec3f &near, osg::Vec3f &far);
-
-    bool getRayPlaneIntersection(const osg::Plane &plane, const osg::Vec3f &center, const osg::Vec3f &nearPoint, const osg::Vec3f &farPoint, osg::Vec3f &P);
 
 private:
     osg::observer_ptr<DraggableWire>    m_selection;

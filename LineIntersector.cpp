@@ -127,6 +127,11 @@ void LineIntersector::intersect(osgUtil::IntersectionVisitor &iv, osg::Drawable 
     }
 }
 
+bool LineIntersector::isVirtualIntersector() const
+{
+    return false;
+}
+
 double LineIntersector::getSkewLinesDistance(const osg::Vec3d &r1, const osg::Vec3d &r2, const osg::Vec3d &v1, const osg::Vec3d &v2)
 {
     osg::Vec3d u1 = r2-r1;

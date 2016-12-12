@@ -73,7 +73,6 @@ void DraggableWire::editPick(double u, double v)
 
 void DraggableWire::unselect()
 {
-    std::cout << "unselect frame" << std::endl;
     this->setColorWire(CLR_WIRE);
     this->setColorPointsDefaults();
     m_selectedPoint = -1;
@@ -81,7 +80,6 @@ void DraggableWire::unselect()
 
 void DraggableWire::select()
 {
-    std::cout << "select frame" << std::endl;
     this->setColorWire(CLR_WIRE_HOVER);
     m_selectedPoint = -1;
 }
@@ -89,7 +87,6 @@ void DraggableWire::select()
 void DraggableWire::pick(int index)
 {
     if (index<0 || index > 3) return;
-    std::cout << "pick point" << std::endl;
     this->select();
     for (int i=0; i<4; ++i){
         osg::Vec4f clr = i==index? CLR_POINTS_HOVER : CLR_POINTS;
@@ -107,14 +104,12 @@ void DraggableWire::unpick()
 void DraggableWire::drag()
 {
     if (m_selectedPoint < 0 || m_selectedPoint>3) return;
-    std::cout << "drag point" << std::endl;
     this->setColorPointWire(m_selectedPoint, CLR_DRAG);
 }
 
 void DraggableWire::dragStop()
 {
     if (m_selectedPoint < 0 || m_selectedPoint>3) return;
-    std::cout << "drag point stop" << std::endl;
     this->pick(m_selectedPoint);
 }
 
