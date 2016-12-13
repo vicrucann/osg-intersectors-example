@@ -1,4 +1,7 @@
+#ifdef _WIN32
 #include <Windows.h>
+#endif
+
 #include <iostream>
 
 #include <osgViewer/Viewer>
@@ -37,7 +40,10 @@ osg::Node* createReferenceNode()
 
 int main(int, char**)
 {
+#ifdef _WIN32
     ::SetProcessDPIAware();
+#endif
+
     std::cout << "Line, point and virtual plane intersectors demo." << std::endl;
 
     osgViewer::Viewer viewer;
