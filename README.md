@@ -1,5 +1,7 @@
 # Line, point and virtual plane intersectors using C++11 and OpenSceneGraph
 
+![Intersectors example: screenshots](https://github.com/vicrucann/osg-intersectors-example/blob/master/images/intersectors.gif)
+
 This is an example project that demonstrates the work of three types of intersectors: **line**, **point** and **virtual plane**. While the line and point intersectors are based on standard OSG intersector, the virtual plane intersector utilizes ray casting algorithm - when the intersection is calculated between the ray and a virtual plane.
 
 ## Requirements
