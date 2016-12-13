@@ -1,0 +1,32 @@
+nguage: cpp
+os: linux
+compiler: gcc
+sudo: required
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - cmake
+      - g++-4.8
+
+before_install:
+  - wget https://github.com/vicrucann/OpenSceneGraph/releases/download/OpenSceneGraph-3.4.0/osg-340-deb.tar.gz
+  - tar -zxvf osg-340-deb.tar.gz
+
+install:
+  - export CXX="g++-4.8"
+  - export CC="gcc-4.8"
+  - sudo cp -rv osg-340-deb/lib64 /usr/local/
+  - sudo cp -rv osg-340-deb/include /usr/local/
+  - sudo cp -rv osg-340-deb/bin /usr/local/
+
+before_script:
+   - export LD_LIBRARY_PATH="/usr/local/lib64:/usr/local/lib:$LD_LIBRARY_PATH"
+   - export OPENTHREADS_INC_DIR="/usr/local/include"
+   - export OPENTHREADS_LIB_DIR="/usr/local/lib64:/usr/local/lib"
+   - export PATH="$OPENTHREADS_LIB_DIR:$PATH"
+   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/qt55/lib/cmake
+
+script:
+  - make
