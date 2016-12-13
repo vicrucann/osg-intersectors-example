@@ -1,4 +1,4 @@
-nguage: cpp
+language: cpp
 os: linux
 compiler: gcc
 sudo: required
@@ -26,7 +26,7 @@ before_script:
    - export OPENTHREADS_INC_DIR="/usr/local/include"
    - export OPENTHREADS_LIB_DIR="/usr/local/lib64:/usr/local/lib"
    - export PATH="$OPENTHREADS_LIB_DIR:$PATH"
-   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/opt/qt55/lib/cmake
+   - cmake -DCMAKE_BUILD_TYPE=Release 
 
 script:
   - make
