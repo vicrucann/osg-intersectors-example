@@ -90,7 +90,7 @@ void EventHandler::doDragPoint(const osgGA::GUIEventAdapter &ea, osgGA::GUIActio
         return;
 
     /* obtain new location of the dragging point and edit the selection */
-    VirtualPlaneIntersector* vpi = new VirtualPlaneIntersector(m_selection.get());
+    osg::ref_ptr<VirtualPlaneIntersector> vpi = new VirtualPlaneIntersector(m_selection.get());
     VirtualPlaneIntersector::Intersection intersection = vpi->getIntersection(ea, aa);
     this->updateDragPointGeometry(intersection, ea);
 }

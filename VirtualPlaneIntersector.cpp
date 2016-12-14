@@ -7,7 +7,8 @@
 #include <osg/Camera>
 
 VirtualPlaneIntersector::VirtualPlaneIntersector(DraggableWire *wire)
-    : m_planeGeometry(wire)
+    : osg::Referenced(),
+      m_planeGeometry(wire)
 {
 }
 

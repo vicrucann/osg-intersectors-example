@@ -11,6 +11,8 @@
 #define VIRTUALPLANEINTERSECTOR_H
 
 #include <tuple>
+
+#include <osg/Referenced>
 #include <osg/observer_ptr>
 #include <osgGA/GUIEventAdapter>
 #include <osgGA/GUIActionAdapter>
@@ -26,7 +28,7 @@
  * zero.
  * For the math details, refer to http://vicrucann.github.io/tutorials/osg-raycast/
 */
-class VirtualPlaneIntersector
+class VirtualPlaneIntersector : public osg::Referenced
 {
 public:
     typedef std::tuple<double, double, bool> Intersection;
