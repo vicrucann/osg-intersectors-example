@@ -10,6 +10,7 @@ This is an example project that demonstrates the work of three types of intersec
 
 * Compiler that supports C++11, e.g., GCC-4.8
 * OpenSceneGraph library (>=3.4.0)
+* Graphics card supporting OpenGL (>=3.3) - make sure your drivers are updated
 * CMake (>= 2.8.11)
 
 ## Intersectors
